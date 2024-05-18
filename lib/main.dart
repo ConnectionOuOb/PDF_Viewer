@@ -1,17 +1,18 @@
+import 'object.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const PdfViewerApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class PdfViewerApp extends StatelessWidget {
+  const PdfViewerApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'PDF Viewer',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch(
           primarySwatch: Colors.blue,
@@ -21,28 +22,28 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const MyHomePage(),
+      home: const PdfViewerScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class PdfViewerScreen extends StatefulWidget {
+  const PdfViewerScreen({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<PdfViewerScreen> createState() => _PdfViewerScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _currentIndex = 0;
-  final List<String> _pdfTitles = [
-    '華光三部曲',
-    '孔孟老莊通覽圖',
-    '孫子兵法幫你贏',
-    '孔孟老莊一本通＋演講連結',
-    '哈佛學法案例',
-    '決策一條龍',
-    '心知力解64卦',
+class _PdfViewerScreenState extends State<PdfViewerScreen> {
+  int _selectedIndex = 0;
+  final List<PdfInfo> _pdfTitles = [
+    PdfInfo('1. 華光三部曲', '1.pdf'),
+    PdfInfo('2. 孔孟老莊通覽圖', '2.pdf'),
+    PdfInfo('3. 孫子兵法幫你贏', '3.pdf'),
+    PdfInfo('4. 孔孟老莊一本通 + 演講連結', '4.pdf'),
+    PdfInfo('5. 哈佛學法案例', '5.pdf'),
+    PdfInfo('6. 決策一條龍', '6.pdf'),
+    PdfInfo('7. 心知力解64卦', '7.pdf'),
   ];
 
   @override
@@ -62,22 +63,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                      _currentIndex = index;
+                      _selectedIndex = index;
                     });
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(_pdfTitles[index]),
+                    child: Text(
+                      _pdfTitles[index].title,
+                      style: TextStyle(
+                        color: index == _selectedIndex ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
                   ),
                 );
               },
             ),
           ),
-          Expanded(
-            child: PDFView(
-              filePath: 'assets/pdfs/${_pdfTitles[_currentIndex]}.pdf',
-            ),
-          ),
+          SfPdfViewer.asset('${_pdfTitles[_selectedIndex].path}'),
         ],
       ),
     );
