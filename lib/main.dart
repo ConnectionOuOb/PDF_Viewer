@@ -12,6 +12,7 @@ class PdfViewerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'PDF Viewer',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch(
@@ -36,6 +37,7 @@ class PdfViewerScreen extends StatefulWidget {
 
 class _PdfViewerScreenState extends State<PdfViewerScreen> {
   int _selectedIndex = 0;
+  final _scrollController = ScrollController();
   final List<PdfInfo> _pdfTitles = [
     PdfInfo('1. 華光三部曲', '1.pdf'),
     PdfInfo('2. 孔孟老莊通覽圖', '2.pdf'),
@@ -50,14 +52,16 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('PDF Viewer'),
-      ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 50,
+        title: Container(
+          height: 40,
+          color: Theme.of(context).colorScheme.surface,
+          child: Scrollbar(
+            thickness: 5,
+            thumbVisibility: true,
+            controller: _scrollController,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
+              controller: _scrollController,
               itemCount: _pdfTitles.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
@@ -72,6 +76,7 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
                       _pdfTitles[index].title,
                       style: TextStyle(
                         color: index == _selectedIndex ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
+                        fontSize: 16,
                       ),
                     ),
                   ),
@@ -79,8 +84,10 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
               },
             ),
           ),
-          SfPdfViewer.asset('${_pdfTitles[_selectedIndex].path}'),
-        ],
+        ),
+      ),
+      body: SfPdfViewer.asset(
+        'pdfs/${_pdfTitles[_selectedIndex].path}',
       ),
     );
   }
