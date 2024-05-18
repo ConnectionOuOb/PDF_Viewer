@@ -87,7 +87,7 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
         ),
       ),
       body: SfPdfViewer.asset(
-        'pdfs/${_pdfTitles[_selectedIndex].path}',
+        'assets/pdfs/${_pdfTitles[_selectedIndex].path}',
       ),
     );
   }
