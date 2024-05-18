@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,22 +34,51 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _currentIndex = 0;
+  final List<String> _pdfTitles = [
+    '華光三部曲',
+    '孔孟老莊通覽圖',
+    '孫子兵法幫你贏',
+    '孔孟老莊一本通＋演講連結',
+    '哈佛學法案例',
+    '決策一條龍',
+    '心知力解64卦',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("widget.title"),
+        title: const Text('PDF Viewer'),
       ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+      body: Column(
+        children: [
+          SizedBox(
+            height: 50,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _pdfTitles.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _currentIndex = index;
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(_pdfTitles[index]),
+                  ),
+                );
+              },
             ),
-          ],
-        ),
+          ),
+          Expanded(
+            child: PDFView(
+              filePath: 'assets/pdfs/${_pdfTitles[_currentIndex]}.pdf',
+            ),
+          ),
+        ],
       ),
     );
   }
