@@ -38,6 +38,7 @@ class PdfViewerScreen extends StatefulWidget {
 class _PdfViewerScreenState extends State<PdfViewerScreen> {
   int _selectedIndex = 0;
   final _scrollController = ScrollController();
+  late PdfViewerController _pdfViewerController;
   final List<PdfInfo> _pdfTitles = [
     PdfInfo('1. 華光三部曲', '1.pdf'),
     PdfInfo('2. 孔孟老莊通覽圖', '2.pdf'),
@@ -47,6 +48,12 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
     PdfInfo('6. 決策一條龍', '6.pdf'),
     PdfInfo('7. 心知力解64卦', '7.pdf'),
   ];
+
+  @override
+  void initState() {
+    _pdfViewerController = PdfViewerController();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,9 +92,53 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
             ),
           ),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.zoom_in, color: _pdfViewerController.zoomLevel == 5 ? Colors.grey : Colors.black),
+            onPressed: () {
+              if (_pdfViewerController.zoomLevel < 5) {
+                _pdfViewerController.zoomLevel += 1;
+              }
+              setState(() {});
+            },
+          ),
+          const SizedBox(width: 10),
+          IconButton(
+            icon: Icon(Icons.zoom_out, color: _pdfViewerController.zoomLevel == 1 ? Colors.grey : Colors.black),
+            onPressed: () {
+              if (_pdfViewerController.zoomLevel > 1) _pdfViewerController.zoomLevel -= 1;
+              setState(() {});
+            },
+          ),
+          const SizedBox(width: 10),
+          DropdownButton<int>(
+            value: _pdfViewerController.pageNumber,
+            underline: Container(),
+            items: List.generate(
+              _pdfViewerController.pageCount,
+              (index) => DropdownMenuItem(
+                value: index + 1,
+                child: Text('Page ${index + 1}'),
+              ),
+            ),
+            onChanged: (int? value) {
+              setState(() {
+                if (value != null) {
+                  _pdfViewerController.jumpToPage(value);
+                }
+              });
+            },
+          ),
+          const SizedBox(width: 10),
+        ],
       ),
       body: SfPdfViewer.asset(
         'assets/pdfs/${_pdfTitles[_selectedIndex].path}',
+        controller: _pdfViewerController,
+        maxZoomLevel: 5,
+        enableDoubleTapZooming: true,
+        pageLayoutMode: PdfPageLayoutMode.single,
+        interactionMode: PdfInteractionMode.pan,
       ),
     );
   }
