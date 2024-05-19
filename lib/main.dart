@@ -58,7 +58,8 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
     var pdfViewing = _pdfTitles[_selectedIndex];
     return Scaffold(
       appBar: AppBar(
-        title: Container(
+        title: Text(pdfViewing.title),
+/*Container(
           height: 40,
           color: Theme.of(context).colorScheme.surface,
           child: Scrollbar(
@@ -90,7 +91,7 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
               },
             ),
           ),
-        ),
+        ),*/
         actions: [
           IconButton(
             icon: Icon(Icons.zoom_in, color: pdfViewing.pdfViewerController.zoomLevel == 5 ? Colors.grey : Colors.black),
@@ -130,6 +131,23 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
           ),
           const SizedBox(width: 10),
         ],
+      ),
+      drawer: Drawer(
+        child: ListView.builder(
+          itemCount: _pdfTitles.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(_pdfTitles[index].title),
+              selected: index == _selectedIndex,
+              onTap: () {
+                setState(() {
+                  _selectedIndex = index;
+                  Navigator.pop(context);
+                });
+              },
+            );
+          },
+        ),
       ),
       body: SfPdfViewer.asset(
         'assets/pdfs/${pdfViewing.path}',
