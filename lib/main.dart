@@ -1,4 +1,3 @@
-import 'object.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
@@ -37,7 +36,6 @@ class PdfViewerScreen extends StatefulWidget {
 
 class _PdfViewerScreenState extends State<PdfViewerScreen> {
   int _selectedIndex = 0;
-  final _scrollController = ScrollController();
   final List<PdfInfo> _pdfTitles = [
     PdfInfo(path: '1.pdf', title: '1. 華光三部曲', pdfViewerController: PdfViewerController()),
     PdfInfo(path: '2.pdf', title: '2. 孔孟老莊通覽圖', pdfViewerController: PdfViewerController()),
@@ -47,6 +45,7 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
     PdfInfo(path: '6.pdf', title: '6. 決策一條龍', pdfViewerController: PdfViewerController()),
     PdfInfo(path: '7.pdf', title: '7. 心知力解64卦', pdfViewerController: PdfViewerController()),
   ];
+  final Map<String, String> links = {};
 
   @override
   void initState() {
@@ -58,40 +57,11 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
     var pdfViewing = _pdfTitles[_selectedIndex];
     return Scaffold(
       appBar: AppBar(
-        title: Text(pdfViewing.title),
-/*Container(
-          height: 40,
-          color: Theme.of(context).colorScheme.surface,
-          child: Scrollbar(
-            thickness: 5,
-            thumbVisibility: true,
-            controller: _scrollController,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              controller: _scrollController,
-              itemCount: _pdfTitles.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedIndex = index;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      _pdfTitles[index].title,
-                      style: TextStyle(
-                        color: index == _selectedIndex ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),*/
+        title: _selectedIndex == 0
+            ? const Text('易經 今解')
+            : _selectedIndex == 1
+                ? const Text('連結')
+                : Text(_pdfTitles[_selectedIndex - 2].title),
         actions: [
           IconButton(
             icon: Icon(Icons.zoom_in, color: pdfViewing.pdfViewerController.zoomLevel == 5 ? Colors.grey : Colors.black),
@@ -133,30 +103,91 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
         ],
       ),
       drawer: Drawer(
-        child: ListView.builder(
-          itemCount: _pdfTitles.length,
-          itemBuilder: (context, index) {
-            return ListTile(
-              title: Text(_pdfTitles[index].title),
-              selected: index == _selectedIndex,
+        child: ListView(
+          children: [
+            ListTile(
+              title: const Text('易經 今解'),
               onTap: () {
                 setState(() {
-                  _selectedIndex = index;
-                  Navigator.pop(context);
+                  _selectedIndex = 0;
                 });
+                Navigator.pop(context);
               },
-            );
-          },
+            ),
+            ListTile(
+              title: const Text('連結'),
+              onTap: () {
+                setState(() {
+                  _selectedIndex = 1;
+                });
+                Navigator.pop(context);
+              },
+            ),
+            ...List.generate(
+              _pdfTitles.length,
+              (index) => ListTile(
+                title: Text(_pdfTitles[index].title),
+                selected: index == _selectedIndex,
+                onTap: () {
+                  setState(() {
+                    _selectedIndex = index + 2;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          ],
         ),
       ),
-      body: SfPdfViewer.asset(
-        'assets/pdfs/${pdfViewing.path}',
-        controller: pdfViewing.pdfViewerController,
-        maxZoomLevel: 5,
-        enableDoubleTapZooming: true,
-        pageLayoutMode: PdfPageLayoutMode.single,
-        interactionMode: PdfInteractionMode.pan,
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          Center(
+            child: Image.asset(
+              'assets/images/professor.jpg',
+              fit: BoxFit.cover,
+              height: double.infinity,
+            ),
+          ),
+          ListView.builder(
+            itemCount: links.length,
+            itemBuilder: (context, index) {
+              return ExpansionTile(
+                title: Text(links.keys.elementAt(index)),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(links.values.elementAt(index)),
+                  ),
+                ],
+              );
+            },
+          ),
+          ...List.generate(
+            _pdfTitles.length,
+            (index) => SfPdfViewer.asset(
+              'assets/pdfs/${_pdfTitles[index].path}',
+              controller: _pdfTitles[index].pdfViewerController,
+              maxZoomLevel: 5,
+              enableDoubleTapZooming: true,
+              pageLayoutMode: PdfPageLayoutMode.single,
+              interactionMode: PdfInteractionMode.pan,
+            ),
+          ),
+        ],
       ),
     );
   }
+}
+
+class PdfInfo {
+  final String title;
+  final String path;
+  PdfViewerController pdfViewerController;
+
+  PdfInfo({
+    required this.title,
+    required this.path,
+    required this.pdfViewerController,
+  });
 }
