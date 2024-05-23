@@ -45,6 +45,7 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
     PdfInfo(path: '5.pdf', title: '5. 哈佛學法案例', pdfViewerController: PdfViewerController()),
     PdfInfo(path: '6.pdf', title: '6. 決策一條龍', pdfViewerController: PdfViewerController()),
     PdfInfo(path: '7.pdf', title: '7. 心知力解64卦', pdfViewerController: PdfViewerController()),
+    PdfInfo(path: '8.pdf', title: '8. 歌唱易經', pdfViewerController: PdfViewerController()),
   ];
   final List<LinkInfo> links = [
     LinkInfo(title: 'HBR Ball', url: 'http://140.113.72.120/caseball/examples/caseball.html'),
