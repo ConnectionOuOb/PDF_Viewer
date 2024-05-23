@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(const PdfViewerApp());
@@ -45,7 +46,15 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
     PdfInfo(path: '6.pdf', title: '6. 決策一條龍', pdfViewerController: PdfViewerController()),
     PdfInfo(path: '7.pdf', title: '7. 心知力解64卦', pdfViewerController: PdfViewerController()),
   ];
-  final Map<String, String> links = {};
+  final List<LinkInfo> links = [
+    LinkInfo(title: 'HBR Ball', url: 'http://140.113.72.120/caseball/examples/caseball.html'),
+    LinkInfo(title: '管理學家', url: 'http://140.113.72.120/ManagstBall/examples/gbball.html'),
+    LinkInfo(title: '西洋藝術球', url: 'http://140.113.72.120/Artball/Art_ball/gookon/examples/index.html'),
+    LinkInfo(title: '電影球', url: 'http://140.113.72.120/MovieBall/examples/movieball.html'),
+    LinkInfo(title: '易孔孟老莊', url: 'http://140.113.72.119/gbball/examples/I_Ching.html'),
+    LinkInfo(title: '莊子通覽圖網站', url: 'https://connectionouob.github.io/zhuangzi/'),
+    LinkInfo(title: '易方陣網站', url: 'https://connectionouob.github.io/YiFangJhen/'),
+  ];
 
   @override
   void initState() {
@@ -54,53 +63,57 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var pdfViewing = _pdfTitles[_selectedIndex];
+    int nowPDF = _selectedIndex - 2;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.lightBlueAccent,
         title: _selectedIndex == 0
             ? const Text('易經 今解')
             : _selectedIndex == 1
                 ? const Text('連結')
-                : Text(_pdfTitles[_selectedIndex - 2].title),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.zoom_in, color: pdfViewing.pdfViewerController.zoomLevel == 5 ? Colors.grey : Colors.black),
-            onPressed: () {
-              if (pdfViewing.pdfViewerController.zoomLevel < 5) {
-                pdfViewing.pdfViewerController.zoomLevel += 1;
-              }
-              setState(() {});
-            },
-          ),
-          const SizedBox(width: 10),
-          IconButton(
-            icon: Icon(Icons.zoom_out, color: pdfViewing.pdfViewerController.zoomLevel == 1 ? Colors.grey : Colors.black),
-            onPressed: () {
-              if (pdfViewing.pdfViewerController.zoomLevel > 1) pdfViewing.pdfViewerController.zoomLevel -= 1;
-              setState(() {});
-            },
-          ),
-          const SizedBox(width: 10),
-          DropdownButton<int>(
-            value: pdfViewing.pdfViewerController.pageNumber,
-            underline: Container(),
-            items: List.generate(
-              pdfViewing.pdfViewerController.pageCount,
-              (index) => DropdownMenuItem(
-                value: index + 1,
-                child: Text('Page ${index + 1}'),
-              ),
-            ),
-            onChanged: (int? value) {
-              setState(() {
-                if (value != null) {
-                  pdfViewing.pdfViewerController.jumpToPage(value);
-                }
-              });
-            },
-          ),
-          const SizedBox(width: 10),
-        ],
+                : Text(_pdfTitles[nowPDF].title),
+        actions: _selectedIndex > 1
+            ? [
+                IconButton(
+                  icon: Icon(Icons.zoom_in, color: _pdfTitles[nowPDF].pdfViewerController.zoomLevel == 5 ? Colors.grey : Colors.black),
+                  onPressed: () {
+                    if (_pdfTitles[nowPDF].pdfViewerController.zoomLevel < 5) {
+                      _pdfTitles[nowPDF].pdfViewerController.zoomLevel += 1;
+                    }
+                    setState(() {});
+                  },
+                ),
+                const SizedBox(width: 10),
+                IconButton(
+                  icon: Icon(Icons.zoom_out, color: _pdfTitles[nowPDF].pdfViewerController.zoomLevel == 1 ? Colors.grey : Colors.black),
+                  onPressed: () {
+                    if (_pdfTitles[nowPDF].pdfViewerController.zoomLevel > 1) _pdfTitles[nowPDF].pdfViewerController.zoomLevel -= 1;
+                    setState(() {});
+                  },
+                ),
+                const SizedBox(width: 10),
+                DropdownButton<int>(
+                  value: _pdfTitles[nowPDF].pdfViewerController.pageNumber,
+                  underline: Container(),
+                  items: List.generate(
+                    _pdfTitles[nowPDF].pdfViewerController.pageCount,
+                    (index) => DropdownMenuItem(
+                      value: index + 1,
+                      child: Text('Page ${index + 1}'),
+                    ),
+                  ),
+                  onChanged: (int? value) {
+                    setState(() {
+                      if (value != null) {
+                        _pdfTitles[nowPDF].pdfViewerController.jumpToPage(value);
+                      }
+                    });
+                  },
+                ),
+                const SizedBox(width: 10),
+              ]
+            : [],
       ),
       drawer: Drawer(
         child: ListView(
@@ -127,7 +140,6 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
               _pdfTitles.length,
               (index) => ListTile(
                 title: Text(_pdfTitles[index].title),
-                selected: index == _selectedIndex,
                 onTap: () {
                   setState(() {
                     _selectedIndex = index + 2;
@@ -149,19 +161,61 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
               height: double.infinity,
             ),
           ),
-          ListView.builder(
-            itemCount: links.length,
-            itemBuilder: (context, index) {
-              return ExpansionTile(
-                title: Text(links.keys.elementAt(index)),
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(links.values.elementAt(index)),
+          Container(
+            padding: const EdgeInsets.all(80),
+            alignment: Alignment.center,
+            child: Table(
+              border: TableBorder.all(),
+              children: [
+                const TableRow(
+                  children: [
+                    TableCell(
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Text(
+                          '網站標題',
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    TableCell(
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Text(
+                          '網站連結',
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                ...links.map(
+                  (e) => TableRow(
+                    children: [
+                      TableCell(child: Padding(padding: const EdgeInsets.all(20), child: Text(e.title, style: const TextStyle(fontSize: 20)))),
+                      TableCell(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: GestureDetector(
+                            onTap: () {
+                              launchUrl(Uri.parse(e.url));
+                            },
+                            child: Text(
+                              e.url,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              );
-            },
+                ),
+              ],
+            ),
           ),
           ...List.generate(
             _pdfTitles.length,
@@ -190,4 +244,11 @@ class PdfInfo {
     required this.path,
     required this.pdfViewerController,
   });
+}
+
+class LinkInfo {
+  final String title;
+  final String url;
+
+  LinkInfo({required this.title, required this.url});
 }
