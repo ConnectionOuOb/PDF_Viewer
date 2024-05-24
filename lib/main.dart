@@ -35,7 +35,7 @@ class PdfViewerScreen extends StatefulWidget {
   State<PdfViewerScreen> createState() => _PdfViewerScreenState();
 }
 
-class _PdfViewerScreenState extends State<PdfViewerScreen> {
+class _PdfViewerScreenState extends State<PdfViewerScreen> with AutomaticKeepAliveClientMixin {
   int _selectedIndex = 0;
   final List<PdfInfo> _pdfTitles = [
     PdfInfo(path: '1.pdf', title: '1. 華光三部曲', pdfViewerController: PdfViewerController()),
@@ -58,12 +58,11 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-  }
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     int nowPDF = _selectedIndex - 2;
     return Scaffold(
       backgroundColor: Colors.white,
