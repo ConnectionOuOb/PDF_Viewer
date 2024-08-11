@@ -1,5 +1,5 @@
 # PDF Viewer
-### A web app that shows textbook pdfs
+### A web app that shows textbook PDFs
 
 ### [Demo](https://connectionouob.github.io/ebook/)
 
