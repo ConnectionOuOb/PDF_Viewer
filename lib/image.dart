@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 class ProgressiveImage extends StatefulWidget {
@@ -17,6 +18,9 @@ class ProgressiveImage extends StatefulWidget {
 class _ProgressiveImageState extends State<ProgressiveImage>
     with SingleTickerProviderStateMixin {
   bool _fullLoaded = false;
+  Timer? _debounce;
+  ImageStreamListener? _imageListener;
+  ImageStream? _imageStream;
   late final AnimationController _fadeController;
   late final Animation<double> _fadeAnimation;
 
@@ -32,19 +36,28 @@ class _ProgressiveImageState extends State<ProgressiveImage>
       curve: Curves.easeIn,
     );
 
+    _debounce = Timer(const Duration(milliseconds: 300), _startFullLoad);
+  }
+
+  void _startFullLoad() {
+    if (!mounted) return;
     final fullImage = AssetImage(widget.fullPath);
-    fullImage
-        .resolve(const ImageConfiguration())
-        .addListener(ImageStreamListener((_, __) {
+    _imageStream = fullImage.resolve(const ImageConfiguration());
+    _imageListener = ImageStreamListener((_, __) {
       if (mounted) {
         setState(() => _fullLoaded = true);
         _fadeController.forward();
       }
-    }));
+    });
+    _imageStream!.addListener(_imageListener!);
   }
 
   @override
   void dispose() {
+    _debounce?.cancel();
+    if (_imageListener != null && _imageStream != null) {
+      _imageStream!.removeListener(_imageListener!);
+    }
     _fadeController.dispose();
     super.dispose();
   }

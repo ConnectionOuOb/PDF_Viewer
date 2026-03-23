@@ -66,12 +66,7 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> with AutomaticKeepAli
                     ),
                     onChanged: (int? value) {
                       if (value != null) {
-                        final ctrl = _pageControllers[bookIndex];
-                        ctrl?.animateToPage(
-                          value - 1,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        );
+                        _pageControllers[bookIndex]?.jumpToPage(value - 1);
                       }
                     },
                   ),
