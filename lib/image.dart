@@ -15,8 +15,7 @@ class ProgressiveImage extends StatefulWidget {
   State<ProgressiveImage> createState() => _ProgressiveImageState();
 }
 
-class _ProgressiveImageState extends State<ProgressiveImage>
-    with SingleTickerProviderStateMixin {
+class _ProgressiveImageState extends State<ProgressiveImage> with SingleTickerProviderStateMixin {
   bool _fullLoaded = false;
   Timer? _debounce;
   ImageStreamListener? _imageListener;

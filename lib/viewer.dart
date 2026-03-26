@@ -47,6 +47,7 @@ class _BookPageViewerState extends State<BookPageViewer> {
 
   @override
   Widget build(BuildContext context) {
+    final notSinglePageBook = widget.book.pageCount != 1;
     final bookId = widget.book.id;
     final pageCount = widget.book.pageCount;
 
@@ -89,7 +90,7 @@ class _BookPageViewerState extends State<BookPageViewer> {
           },
         ),
 
-        if (_currentIndex > 0)
+        if (_currentIndex > 0 && notSinglePageBook)
           Positioned(
             left: 0,
             top: 0,
@@ -100,7 +101,7 @@ class _BookPageViewerState extends State<BookPageViewer> {
             ),
           ),
 
-        if (_currentIndex < pageCount - 1)
+        if (_currentIndex < pageCount - 1 && notSinglePageBook)
           Positioned(
             right: 0,
             top: 0,

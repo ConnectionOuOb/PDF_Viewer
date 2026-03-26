@@ -37,6 +37,12 @@ flutter:
     - assets/images/preview/10/
     - assets/images/preview/11/
     - assets/images/preview/12/
+    - assets/images/preview/13/
+    - assets/images/preview/14/
+    - assets/images/preview/15/
+    - assets/images/preview/16/
+    - assets/images/preview/17/
+    - assets/images/preview/18/
     - assets/images/full/1/
     - assets/images/full/2/
     - assets/images/full/3/
@@ -49,3 +55,9 @@ flutter:
     - assets/images/full/10/
     - assets/images/full/11/
     - assets/images/full/12/
+    - assets/images/full/13/
+    - assets/images/full/14/
+    - assets/images/full/15/
+    - assets/images/full/16/
+    - assets/images/full/17/
+    - assets/images/full/18/

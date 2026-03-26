@@ -1,7 +1,10 @@
 import 'define.dart';
+import 'page20.dart';
 import 'viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+const Text page20Title = Text('19. 喫茶易');
 
 class PdfViewerScreen extends StatefulWidget {
   const PdfViewerScreen({super.key});
@@ -12,7 +15,6 @@ class PdfViewerScreen extends StatefulWidget {
 
 class _PdfViewerScreenState extends State<PdfViewerScreen> with AutomaticKeepAliveClientMixin {
   int _selectedIndex = 0;
-
   late final List<PageController?> _pageControllers;
 
   @override
@@ -36,19 +38,23 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> with AutomaticKeepAli
   Widget build(BuildContext context) {
     super.build(context);
     final int bookIndex = _selectedIndex - 2;
-    final bool isBookView = _selectedIndex > 1;
-    final bool bookHasPages = isBookView && books[bookIndex].pageCount > 0;
+    final bool isBookView = _selectedIndex > 1 && _selectedIndex < 20;
+    final int numPages = isBookView ? books[bookIndex].pageCount : 0;
+    final bool bookHasPages = isBookView && numPages > 0;
+    final bool notSinglePageBook = numPages != 1;
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.cyan.shade100,
         title: _selectedIndex == 0
-            ? const Text('易經 今解')
+            ? const Text('知識通覧法（Hippocampus maps)')
             : _selectedIndex == 1
                 ? const Text('連結')
+                : _selectedIndex == 20
+                    ? page20Title
                 : Text(books[bookIndex].title),
-        actions: bookHasPages
+        actions: bookHasPages && notSinglePageBook
             ? [
                 Padding(
                   padding: const EdgeInsets.only(right: 15),
@@ -58,7 +64,7 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> with AutomaticKeepAli
                     value: books[bookIndex].currentPage,
                     underline: Container(),
                     items: List.generate(
-                      books[bookIndex].pageCount,
+                      numPages,
                       (index) => DropdownMenuItem(
                         value: index + 1,
                         child: Text('Page ${index + 1}'),
@@ -101,6 +107,13 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> with AutomaticKeepAli
                 },
               ),
             ),
+            ListTile(
+              title: page20Title,
+              onTap: () {
+                setState(() => _selectedIndex = 20);
+                Navigator.pop(context);
+              },
+            ),
           ],
         ),
       ),
@@ -119,6 +132,8 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> with AutomaticKeepAli
       );
     } else if (_selectedIndex == 1) {
       return _buildLinksTable();
+    } else if (_selectedIndex == 20) {
+      return Page20();
     } else {
       final int bookIndex = _selectedIndex - 2;
       final book = books[bookIndex];
