@@ -18,7 +18,7 @@ final List<BookInfo> books = [
   BookInfo(id: 15, title: '15. 孫子兵法通覽', pageCount: 1),
   BookInfo(id: 16, title: '16. 24通性+99計', pageCount: 1),
   BookInfo(id: 17, title: '17. 品茶論易', pageCount: 1),
-  BookInfo(id: 18, title: '18. 吟詩解意', pageCount: 1),
+  BookInfo(id: 18, title: '18. 吟詩解易', pageCount: 1),
 ];
 
 final List<LinkInfo> links = [

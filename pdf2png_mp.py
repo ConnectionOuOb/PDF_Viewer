@@ -14,7 +14,7 @@ def convert_one_pdf(pdf: str) -> None:
     if not os.path.exists(path_png):
         os.makedirs(path_png)
 
-    images = convert_from_path(os.path.join(PATH_PDF, pdf), dpi=72)
+    images = convert_from_path(os.path.join(PATH_PDF, pdf), dpi=50)
     for i, img in enumerate(images):
         img.save(os.path.join(path_png, f"{i+1}.png"), "PNG")
         print(f"Converted {pdf} to {path_png}/{i+1}.png")
